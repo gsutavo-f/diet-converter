@@ -24,7 +24,7 @@ class FoodController {
    }
 
    static getFoodsForSelect(req, res) {
-      Food.find((err, foods) => {
+      Food.find({}, null, {sort: {name: 1}}, (err, foods) => {
          if (err) {
             res.status(500).send({message: err.message});
          } else {
