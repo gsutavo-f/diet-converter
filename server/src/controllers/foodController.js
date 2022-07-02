@@ -12,6 +12,18 @@ class FoodController {
       });
    }
 
+   static getFoodsForSelect(req, res) {
+      Food.find((err, foods) => {
+         if (err) {
+            res.status(500).send({message: err.message});
+         } else {
+            res.status(200).send(foods.map((food) => {
+               return { value: food._id, label: `${food.name}, ${food.description}` }
+            }))
+         }
+      });
+   }
+
    static createFood(req, res) {
       let food = new Food(req.body);
       food.save((err) => {
