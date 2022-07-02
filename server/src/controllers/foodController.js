@@ -12,6 +12,17 @@ class FoodController {
       });
    }
 
+   static getFoodById(req, res) {
+      const {id} = req.params;
+      Food.findById(id, (err, result) => {
+         if(err) {
+            res.status(400).send({message: `${err.message} - Food not found`});
+         } else {
+            res.status(200).send(result);
+         }
+      });
+   }
+
    static getFoodsForSelect(req, res) {
       Food.find((err, foods) => {
          if (err) {

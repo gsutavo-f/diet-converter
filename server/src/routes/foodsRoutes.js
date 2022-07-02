@@ -5,6 +5,7 @@ const router = express.Router();
 
 router
    .get('/food/select', FoodController.getFoodsForSelect)
+   .get('/food/:id', FoodController.getFoodById)
    .get('/food', FoodController.getFoods)
    .post('/food', FoodController.createFood)
    .put('/food/:id', FoodController.updateFood)
