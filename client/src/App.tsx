@@ -18,21 +18,21 @@ interface Food {
 
 export default function App() {
    const [selectList, setSelectList] = useState<FoodSelect[]>([]);
-   const [originalFood, setOriginalFood] = useState<Food>();
-   const [alternativeFood, setAlternativeFood] = useState<Food>();
+   const [inputFood, setInputFood] = useState<Food>();
+   const [outputFood, setOutputFood] = useState<Food>();
    const [grams, setGrams] = useState(100);
    const [calories, setCalories] = useState(0);
    const [altGrams, setAltGrams] = useState(0);
 
    function findOriginalFoodById(id: String) {
       Axios.get(`http://localhost:3001/food/${id}`).then((response) => {
-         setOriginalFood(response.data);
+         setInputFood(response.data);
       });
    }
 
    function findAlternativeFoodById(id: String) {
       Axios.get(`http://localhost:3001/food/${id}`).then((response) => {
-         setAlternativeFood(response.data);
+         setOutputFood(response.data);
       });
    }
 
@@ -43,13 +43,13 @@ export default function App() {
    }, []);
 
    useEffect(() => {
-      if (originalFood) {
-         setCalories(Number(originalFood.calories) * grams / 100);
+      if (inputFood) {
+         setCalories(Number(inputFood.calories) * grams / 100);
       }
-   }, [originalFood, grams]);
+   }, [inputFood, grams]);
 
    useEffect(() => {
-      setAltGrams(Math.round(((calories / Number(alternativeFood?.calories) * 100) + Number.EPSILON) * 100) / 100);
+      setAltGrams(Math.round(((calories / Number(outputFood?.calories) * 100) + Number.EPSILON) * 100) / 100);
    });
 
    return (
@@ -60,7 +60,7 @@ export default function App() {
          <Select
             name="original-food"
             placeholder="Selecione um alimento"
-            value={selectList.find(obj => obj.value === originalFood?._id)}
+            value={selectList.find(obj => obj.value === inputFood?._id)}
             options={selectList}
             onChange={(event) => {
                findOriginalFoodById(event!.value.toString());
@@ -87,7 +87,7 @@ export default function App() {
          <Select
             name="alternative-food"
             placeholder="Selecione um alimento"
-            value={selectList.find(obj => obj.value === alternativeFood?._id)}
+            value={selectList.find(obj => obj.value === outputFood?._id)}
             options={selectList}
             onChange={(event) => {
                findAlternativeFoodById(event!.value.toString());
