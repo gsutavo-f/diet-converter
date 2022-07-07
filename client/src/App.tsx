@@ -20,9 +20,9 @@ export default function App() {
    const [selectList, setSelectList] = useState<FoodSelect[]>([]);
    const [inputFood, setInputFood] = useState<Food>();
    const [outputFood, setOutputFood] = useState<Food>();
-   const [grams, setGrams] = useState(100);
+   const [inputGrams, setInputGrams] = useState(100);
    const [calories, setCalories] = useState(0);
-   const [altGrams, setAltGrams] = useState(0);
+   const [outputGrams, setOutputGrams] = useState(0);
 
    function findOriginalFoodById(id: String) {
       Axios.get(`http://localhost:3001/food/${id}`).then((response) => {
@@ -44,56 +44,78 @@ export default function App() {
 
    useEffect(() => {
       if (inputFood) {
-         setCalories(Number(inputFood.calories) * grams / 100);
+         setCalories(Number(inputFood.calories) * inputGrams / 100);
       }
-   }, [inputFood, grams]);
+   }, [inputFood, inputGrams]);
 
    useEffect(() => {
-      setAltGrams(Math.round(((calories / Number(outputFood?.calories) * 100) + Number.EPSILON) * 100) / 100);
-   });
+      const calculatedGrams = Math.round(((calories / Number(outputFood?.calories) * 100) + Number.EPSILON) * 100) / 100;
+      setOutputGrams(Number.isNaN(calculatedGrams) ? 0 : calculatedGrams);
+   }, [calories, outputFood]);
 
    return (
-      <div>
-         <label htmlFor="original-food">
-            Alimento
-         </label>
-         <Select
-            name="original-food"
-            placeholder="Selecione um alimento"
-            value={selectList.find(obj => obj.value === inputFood?._id)}
-            options={selectList}
-            onChange={(event) => {
-               findOriginalFoodById(event!.value.toString());
-            }}
-         />
-         <label htmlFor="grams">
-            Gramas
-         </label>
-         <input
-            type="number"
-            name="grams"
-            value={grams}
-            onChange={(event) => setGrams(event.target.valueAsNumber)}
-            required
-         />
-         <br/>
-         <label>
-            Calorias
-         </label>
-         {calories} kcal
-         <label htmlFor="alternative-food">
-            Alimento
-         </label>
-         <Select
-            name="alternative-food"
-            placeholder="Selecione um alimento"
-            value={selectList.find(obj => obj.value === outputFood?._id)}
-            options={selectList}
-            onChange={(event) => {
-               findAlternativeFoodById(event!.value.toString());
-            }}
-         />
-         {altGrams} g
+      <div className="md:container md:mx-auto gap-x-40 flex justify-center h-screen items-start">
+         <div className="flex flex-col mt-60">
+            <label className="font-semibold" htmlFor="original-food">
+               Alimento
+            </label>
+            <Select
+               className="w-96"
+               name="original-food"
+               placeholder="Selecione um alimento"
+               value={selectList.find(obj => obj.value === inputFood?._id)}
+               options={selectList}
+               onChange={(event) => {
+                  findOriginalFoodById(event!.value.toString());
+               }}
+            />
+            <label className="mt-3 font-semibold" htmlFor="inputGrams">
+               Gramas
+            </label>
+            <input
+               className="shadow-md p-1 rounded-md"
+               type="number"
+               name="inputGrams"
+               value={inputGrams}
+               onChange={(event) => setInputGrams(event.target.valueAsNumber)}
+               required
+            />
+            <label className="mt-3 font-semibold" htmlFor="calories">
+               Calorias
+            </label>
+            <input
+               className="shadow-md p-1 rounded-md"
+               type="string"
+               name="calories"
+               value={`${calories} kcal`}
+               disabled
+            />
+         </div>
+         <div className="flex flex-col mt-60">
+            <label className="font-semibold" htmlFor="alternative-food">
+               Alimento
+            </label>
+            <Select
+               className="w-96"
+               name="alternative-food"
+               placeholder="Selecione um alimento"
+               value={selectList.find(obj => obj.value === outputFood?._id)}
+               options={selectList}
+               onChange={(event) => {
+                  findAlternativeFoodById(event!.value.toString());
+               }}
+            />
+            <label className="mt-3 font-semibold" htmlFor="outputGrams">
+               Gramas
+            </label>
+            <input
+               className="shadow-md p-1 rounded-md"
+               type="string"
+               name="outputGrams"
+               value={`${outputGrams} g`}
+               disabled
+            />
+         </div>
       </div>
    );
 }
